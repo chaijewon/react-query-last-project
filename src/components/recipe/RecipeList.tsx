@@ -5,6 +5,7 @@ import apiClient from "../../http-commons";
 import {Link} from "react-router-dom";
 import {Recipe,RecipeListData} from "../../types";
 import ListImage from "../commons/ListImage";
+import PagePrint from "../commons/PagePrint";
 // 분리해서 사용
 
 function RecipeList() {
@@ -47,12 +48,15 @@ function RecipeList() {
                         <div className="col-12">
                             <div className="pagination-area d-sm-flex mt-15">
                                 <nav aria-label="#">
-                                    <ul className="pagination">
+                                    {
+                                        data?.data &&
+                                        <PagePrint data={data.data}
+                                                   setCurpage={setCurpage}/>
+                                    }
 
-                                    </ul>
                                 </nav>
                                 <div className="page-status">
-                                    <p>Page  of  results</p>
+                                    <p>Page {curpage} of {data?.data.totalpage} results</p>
                                 </div>
                             </div>
                         </div>
