@@ -276,39 +276,31 @@ function Home(){
                         </div>
 
 
-                        <div className="single-widget-area subscribe_widget text-center">
-                            <div className="widget-title">
-                                <h6>Subscribe &amp; Follow</h6>
-                            </div>
-                            <div className="subscribe-link">
-                                <a href="#"><i className="fa fa-facebook" aria-hidden="true"></i></a>
-                                <a href="#"><i className="fa fa-twitter" aria-hidden="true"></i></a>
-                                <a href="#"><i className="fa fa-google" aria-hidden="true"></i></a>
-                                <a href="#"><i className="fa fa-linkedin-square" aria-hidden="true"></i></a>
-                                <a href="#"><i className="fa fa-instagram" aria-hidden="true"></i></a>
-                                <a href="#"><i className="fa fa-vimeo" aria-hidden="true"></i></a>
-                            </div>
-                        </div>
 
 
                         <div className="single-widget-area popular-post-widget">
                             <div className="widget-title text-center">
-                                <h6>부산에 가면</h6>
+                                <h6>추천 맛집</h6>
                             </div>
 
-
-
+                                 {
+                                   data?.data.fList.map((food:{
+                                       name: string,
+                                       type: string,
+                                       phone: string,
+                                       poster: string
+                                       },index:number)=>
                                     <div className="single-populer-post d-flex">
-                                        <img src=""/>
+                                        <img src={"https://www.menupan.com"+food.poster} alt=""/>
                                         <div className="post-content">
                                             <a href="#">
-                                                <h6></h6>
+                                                <h6>{food.name}</h6>
                                             </a>
-                                            <p></p>
+                                            <p>{food.type}</p>
                                         </div>
                                     </div>
 
-
+                                   )}
 
 
                         </div>
