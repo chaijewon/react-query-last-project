@@ -10,7 +10,7 @@ const ListImage:FC<ListImageProps>=({recipe,index})=>{
             <div className="single-post wow fadeInUp" data-wow-delay="0.1s">
 
                 <div className="post-thumb">
-                    <Link to={"#"}>
+                    <Link to={`/recipe/detail/${recipe.no}`}>
                         <img src={recipe.poster} alt={""}/>
                     </Link>
                 </div>
@@ -46,7 +46,7 @@ const ListImage:FC<ListImageProps>=({recipe,index})=>{
                             </div>
                         </div>
                     </div>
-                    <Link to={"#"}>
+                    <Link to={`/recipe/deteil/${recipe.no}`}>
                         <h4 className="post-headline">{recipe.title}</h4>
                     </Link>
                 </div>

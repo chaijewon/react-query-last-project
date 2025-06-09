@@ -7,7 +7,7 @@ import {Recipe,RecipeListData} from "../../types";
 import ListImage from "../commons/ListImage";
 import PagePrint from "../commons/PagePrint";
 // 분리해서 사용
-
+// app.use(cors()) => NodeJS => CrossOrigin
 function RecipeList() {
     const [curpage, setCurpage] = useState<number>(1);
     const {isLoading,isError,error,data}=useQuery<AxiosResponse<RecipeListData>,Error>({

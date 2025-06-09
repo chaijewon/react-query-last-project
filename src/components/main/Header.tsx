@@ -89,8 +89,8 @@ function Header() {
                                                role="button" data-toggle="dropdown" aria-haspopup="true"
                                                aria-expanded="false">맛집</a>
                                             <div className="dropdown-menu" aria-labelledby="yummyDropdown">
-                                                <Link className="dropdown-item" to={"/info/list/1"}>맛집 목록</Link>
-                                                <Link className="dropdown-item" to={"/info/list/2"}>맛집 검색</Link>
+                                                <Link className="dropdown-item" to={"/food/list"}>맛집 목록</Link>
+                                                <Link className="dropdown-item" to={"/food/find"}>맛집 검색</Link>
                                             </div>
                                         </li>
                                         <li className="nav-item">

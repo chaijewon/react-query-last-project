@@ -5,7 +5,7 @@ import Header from "./components/main/Header";
 import Footer from "./components/main/Footer";
 
 import RecipeList from "./components/recipe/RecipeList";
-
+import FoodList from "./components/food/FoodList";
 function App() {
   return (
      <Router>
@@ -13,6 +13,7 @@ function App() {
        <Routes>
          <Route path="/" element={<Home/>}/>
          <Route path="/recipe/list" element={<RecipeList/>}/>
+         <Route path="/food/list" element={<FoodList/>}/>
        </Routes>
        <Footer/>
      </Router>

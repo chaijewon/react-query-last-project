@@ -1,5 +1,29 @@
 import {FC} from "react";
-import {PagePrintProps} from "../../types";
+
+interface Food {
+    name: string;
+    type: string;
+    hit: number;
+    likecount: number;
+    phone: string;
+    fno: number;
+    poster: string;
+    num: number;
+}
+
+interface FoodListProps {
+    list: Food[];
+    totalpage:number;
+    curpage:number;
+    startPage:number;
+    endPage:number;
+}
+
+interface PagePrintProps {
+    data: FoodListProps;
+    setCurpage: (page:number) => void;
+}
+
 const PagePrint:FC<PagePrintProps>=({data,setCurpage})=>{
     const {curpage,totalpage,startPage , endPage}=data
 
