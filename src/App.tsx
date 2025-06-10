@@ -12,13 +12,16 @@ import BoardDelete from "./components/board/BoardDelete";
 import BoardDetail from "./components/board/BoardDetail";
 import BoardInsert from "./components/board/BoardInsert";
 import FoodDetail from "./components/food/FoodDetail";
+import RecipeDetail from "./components/recipe/RecipeDetail";
 function App() {
   return (
      <Router>
        <Header/>
        <Routes>
+
            <Route path="/" element={<Home/>}/>
            <Route path="/recipe/list" element={<RecipeList/>}/>
+           <Route path="/recipe/detail/:no" element={<RecipeDetail/>}/>
            <Route path="/food/list" element={<FoodList/>}/>
            <Route path="/food/detail/:fno" element={<FoodDetail/>}/>
 
