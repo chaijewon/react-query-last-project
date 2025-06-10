@@ -1,7 +1,24 @@
-import {Fragment} from "react";
+import {Fragment,useState,useRef,useEffect} from "react";
 import {Link} from "react-router-dom";
+import {useMutation} from "@tanstack/react-query";
+import apiClient from "../../http-commons";
 // jsx => javascript+xml => createElement
 function Header() {
+    const [login, setLogin] = useState<boolean>(false);
+    const [id, setId] = useState<string>("");
+    const [pwd, setPwd] = useState<string>("");
+    const idRef=useRef(null)
+    const pwdRef = useRef(null)
+    // sessionStorage
+    /*
+         서버에서 session저장 안된다
+         -------------------------  DB
+         세션 저장 : sessionStorage.=setItem("키","값") > 서버로 id,pwd 전송 => 결과값
+         세션 해제 : sessionStorage.clear()
+
+         // 댓글
+
+     */
     return (
         <Fragment>
             <div className="top_header_area">
