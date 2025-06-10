@@ -31,8 +31,8 @@ async function recipeFind(req,res){
    let fd=req.query.fd||'간식'; // string
    let page=req.query.page||1;
    let rowSize=12;
-   let start=(page-1)*rowSize;
-   let end=page*rowSize;
+   let start=(rowSize*parseInt(page))-(rowSize-1);
+   let end=parseInt(page)*rowSize;
    // 오라클 연결
    let connection;
    try
@@ -67,8 +67,17 @@ async function recipeFind(req,res){
             WHERE num BETWEEN ${start} AND ${end}`
        );
        console.log(result);
-
-       res.json(result.rows)
+       const result2=await connection.execute(
+           `SELECT CEIL(COUNT(*)/12.0) as totalpage FROM recipe
+            WHERE title LIKE '%${fd}%' 
+           `
+       )
+       console.log(result2);
+       const data={
+           totalpage:result2.rows[0].TOTALPAGE,
+           recipes:result.rows
+       }
+       res.json(data)
    }catch(err){
        console.log(err);
    }

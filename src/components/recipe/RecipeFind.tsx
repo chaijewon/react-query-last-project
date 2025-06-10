@@ -15,7 +15,10 @@ interface Recipe{
     NUM:number;
 }
 interface RecipeResponse{
-    data:Recipe[];
+    data:{
+        recipes:Recipe[],
+        totalpage:number
+    };
 }
 function RecipeFind(){
    const [curpage, setCurpage] = useState<number>(1);
@@ -38,9 +41,18 @@ function RecipeFind(){
             titleRef.current?.focus();
             return
         }
-        if(titleRef.current)
-           setTitle(titleRef.current?.value)
+        if(titleRef.current) {
+            setTitle(titleRef.current?.value)
+            setCurpage(1)
+        }
         foodFindData()
+    }
+    const prev=()=>{
+        setCurpage(curpage>1?curpage-1:curpage);
+    }
+    const next=()=>{
+        if(data?.data.totalpage)
+          setCurpage(curpage<data?.data.totalpage?curpage+1:curpage)
     }
    return (
        <Fragment>
@@ -66,7 +78,7 @@ function RecipeFind(){
                    </div>
                    <div className="row" style={{marginTop:"20px"}}>
                           {
-                             data?.data.map((recipe:Recipe,index:number)=>
+                             data?.data.recipes.map((recipe:Recipe,index:number)=>
                                  <div className="col-12 col-md-6 col-lg-4">
                                      <div className="single-post wow fadeInUp" data-wow-delay="0.1s">
 
@@ -115,6 +127,14 @@ function RecipeFind(){
                                  </div>
                              )
                           }
+
+                   </div>
+                   <div className="row" style={{"marginTop":"10px"}}>
+                       <div className={"text-center"}>
+                        <button className={"btn-danger btn-sm"} onClick={prev}>이전</button>
+                         {curpage} page / {data?.data.totalpage} pages
+                        <button className={"btn-danger btn-sm"} onClick={next}>다음</button>
+                       </div>
                    </div>
                </div>
            </section>
