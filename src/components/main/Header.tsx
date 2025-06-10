@@ -120,6 +120,10 @@ function Header() {
                                             <Link className="nav-link" to={"/news/list"}>뉴스</Link>
 
                                         </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to={"/chat/chat"}>채팅</Link>
+
+                                        </li>
 
                                     </ul>
                                 </div>
