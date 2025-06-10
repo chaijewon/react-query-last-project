@@ -10,3 +10,75 @@ app.use(cors({
     origin: "*",
     method: ["GET","POST","DELETE","PUT"]
 }))
+
+// 서버 구동
+const server=app.listen(3355,()=>{
+    console.log("Server started on http://localhost:3355")
+});
+
+const oracledb=require('oracledb'); // js
+// import oralcedb from 'oracledb' // ts
+oracledb.outFormat=oracledb.OUT_FORMAT_OBJECT
+// 요청 받기
+app.get('/recipe/find', (req,res)=>{
+     recipeFind(req,res);
+})
+// 요청 처리 => req , 응답 : res
+// http://localhost:3355/recipe/find?fd=맛집
+async function recipeFind(req,res){
+   // 검색어 받기
+   // String fd=request.getParameter("fd")
+   let fd=req.query.fd||'간식'; // string
+   let page=req.query.page||1;
+   let rowSize=12;
+   let start=(page-1)*rowSize;
+   let end=page*rowSize;
+   // 오라클 연결
+   let connection;
+   try
+   {
+        // getConnecton() => 서버연결
+       connection=await oracledb.getConnection({
+           user:"hr",
+           password:"happy",
+           connectionString:"localhost:1521/xe",
+       });
+       /*
+         `SELECT no,poster,title,chef,hit,likecount,num
+            FROM (SELECT no,poster,title,chef,hit,likecount,rownum as num
+            FROM (SELECT no,poster,title,chef,hit,likecount
+               FROM recipe
+               WHERE title LIKE :title ORDER BY no ASC))
+            WHERE num BETWEEN :start AND :end`
+        */
+       // SQL문장 전송 => 결과값 받기 => COLUMN명 (키) => 대문자
+       /*const binds = {
+           title:  `%${fd}%` ,
+           start: start,
+           end: end
+       };*/
+
+       const result = await connection.execute(
+           `SELECT no,poster,title,chef,hit,likecount,num
+            FROM (SELECT no,poster,title,chef,hit,likecount,rownum as num
+            FROM (SELECT no,poster,title,chef,hit,likecount
+            FROM recipe
+            WHERE title LIKE '%${fd}%' ORDER BY no ASC))
+            WHERE num BETWEEN ${start} AND ${end}`
+       );
+       console.log(result);
+
+       res.json(result.rows)
+   }catch(err){
+       console.log(err);
+   }
+   finally{
+       try {
+           if(connection){
+               await connection.close();
+           }
+       }catch(err){}
+   }
+
+}
+

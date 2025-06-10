@@ -5,6 +5,7 @@ import Header from "./components/main/Header";
 import Footer from "./components/main/Footer";
 
 import RecipeList from "./components/recipe/RecipeList";
+import RecipeFind from "./components/recipe/RecipeFind";
 import FoodList from "./components/food/FoodList";
 import BoardList from "./components/board/BoardList";
 import BoardUpdate from "./components/board/BoardUpdate";
@@ -13,6 +14,7 @@ import BoardDetail from "./components/board/BoardDetail";
 import BoardInsert from "./components/board/BoardInsert";
 import FoodDetail from "./components/food/FoodDetail";
 import RecipeDetail from "./components/recipe/RecipeDetail";
+
 function App() {
   return (
      <Router>
@@ -22,6 +24,7 @@ function App() {
            <Route path="/" element={<Home/>}/>
            <Route path="/recipe/list" element={<RecipeList/>}/>
            <Route path="/recipe/detail/:no" element={<RecipeDetail/>}/>
+           <Route path={"/recipe/find"} element={<RecipeFind/>}/>
            <Route path="/food/list" element={<FoodList/>}/>
            <Route path="/food/detail/:fno" element={<FoodDetail/>}/>
 
