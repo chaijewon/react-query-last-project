@@ -11,19 +11,23 @@ import BoardUpdate from "./components/board/BoardUpdate";
 import BoardDelete from "./components/board/BoardDelete";
 import BoardDetail from "./components/board/BoardDetail";
 import BoardInsert from "./components/board/BoardInsert";
+import FoodDetail from "./components/food/FoodDetail";
 function App() {
   return (
      <Router>
        <Header/>
        <Routes>
-         <Route path="/" element={<Home/>}/>
-         <Route path="/recipe/list" element={<RecipeList/>}/>
-         <Route path="/food/list" element={<FoodList/>}/>
-         <Route path="/board/list" element={<BoardList/>}/>
-         <Route path="/board/update/:no" element={<BoardUpdate/>}/>
-         <Route path="/board/delete/:no" element={<BoardDelete/>}/>
-         <Route path="/board/detail/:no" element={<BoardDetail/>}/>
-         <Route path="/board/insert" element={<BoardInsert/>}/>
+           <Route path="/" element={<Home/>}/>
+           <Route path="/recipe/list" element={<RecipeList/>}/>
+           <Route path="/food/list" element={<FoodList/>}/>
+           <Route path="/food/detail/:fno" element={<FoodDetail/>}/>
+
+           <Route path="/board/list" element={<BoardList/>}/>
+           <Route path="/board/update/:no" element={<BoardUpdate/>}/>
+           <Route path="/board/delete/:no" element={<BoardDelete/>}/>
+           <Route path="/board/detail/:no" element={<BoardDetail/>}/>
+           <Route path="/board/insert" element={<BoardInsert/>}/>
+
        </Routes>
        <Footer/>
      </Router>
