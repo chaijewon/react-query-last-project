@@ -1,8 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState,Fragment } from 'react';
-import axios from 'axios';
+import { useEffect, useRef, useState,Fragment } from 'react';
 
-// Message 타입 정의
 interface Message {
     id: number;
     user: string;
@@ -10,40 +7,37 @@ interface Message {
     timestamp: string;
 }
 
-// 메시지 가져오기 함수
-const fetchMessages = async (): Promise<Message[]> => {
-    const res = await axios.get<Message[]>('http://localhost:4000/messages');
-    return res.data;
-};
-
-// 메시지 전송 함수
-const sendMessage = async (message: { user: string; text: string }): Promise<Message> => {
-    const res = await axios.post<Message>('http://localhost:4000/messages', message);
-    return res.data;
-};
-
 const Chat = () => {
-    const queryClient = useQueryClient();
+    const [messages, setMessages] = useState<Message[]>([]);
     const [text, setText] = useState('');
-    const [user] = useState('User1'); // 실제 사용자 이름과 연동 가능
+    const [user] = useState('User1'); // 실제 로그인 사용자로 대체 가능
+    const ws = useRef<WebSocket | null>(null);
 
-    const { data: messages } = useQuery<Message[]>({
-        queryKey: ['messages'],
-        queryFn: fetchMessages,
-        refetchInterval: 3000, // 3초마다 polling
-    });
+    useEffect(() => {
+        ws.current = new WebSocket('ws://localhost:4100');
 
-    const mutation = useMutation({
-        mutationFn: sendMessage,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['messages'] });
-            setText('');
-        },
-    });
+        ws.current.onopen = () => console.log('WebSocket Connected');
+
+        ws.current.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            if (message.type === 'init') {
+                setMessages(message.data);
+            } else if (message.type === 'new') {
+                setMessages((prev) => [...prev, message.data]);
+            }
+        };
+
+        ws.current.onclose = () => console.log('WebSocket Disconnected');
+
+        return () => {
+            ws.current?.close();
+        };
+    }, []);
 
     const handleSend = () => {
-        if (text.trim()) {
-            mutation.mutate({ user, text });
+        if (ws.current && text.trim()) {
+            ws.current.send(JSON.stringify({ user, text }));
+            setText('');
         }
     };
 
