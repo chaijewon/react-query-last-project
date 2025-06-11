@@ -172,7 +172,26 @@ function FoodDetail(){
                            <tbody>
                              <tr>
                                  <td>
-
+                                     {
+                                         comment &&
+                                         comment.map((com:CommentData)=>
+                                           <table className={"table"}>
+                                               <tbody>
+                                                <tr>
+                                                    <td width={"80%"} className={"text-left"}>
+                                                        ◑{com.name}({com.dbday})
+                                                    </td>
+                                                    <td width={"20%"} className={"text-right"}></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colSpan={2} valign={"top"}>
+                                                        <pre style={{"whiteSpace":"pre-wrap","backgroundColor":"white","border":"none"}}>{com.msg}</pre>
+                                                    </td>
+                                                </tr>
+                                               </tbody>
+                                           </table>
+                                         )
+                                     }
                                  </td>
                              </tr>
                            </tbody>
