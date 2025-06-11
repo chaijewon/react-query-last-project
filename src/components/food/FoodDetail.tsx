@@ -63,6 +63,9 @@ function FoodDetail(){
     const [no,setNo]=useState<number>(0);
     const msgRef = useRef<HTMLTextAreaElement>(null);
     const [toggle,setToggle]=useState<boolean>(true);
+    /////////// 수정
+    const [umsg,setUmsg]=useState<string>("");
+    const umsgRef=  useRef<HTMLTextAreaElement>(null);
     // link:PUSH , back:POP
     /*
           let a=10
@@ -113,6 +116,28 @@ function FoodDetail(){
         }
     })
     // 수정
+
+    const {mutate:comnentUpdate}=useMutation<FoodResponse>({
+        mutationFn:async ()=>{
+            const res:AxiosResponse<FoodResponse,Error>=await apiClient.put(`/comment/update`,{
+                       no:no,
+                       msg:umsg
+                })
+            return res.data
+        },
+        onSuccess:(data:FoodResponse) => {
+            foodDetailData()
+            if (umsgRef.current) {
+                umsgRef.current.value = '';
+            }
+            setToggle(true)
+
+        },
+        onError:(error:Error)=>{
+            console.log("comment Error: ",error.message);
+        }
+    })
+
     if(isLoading){
         return <h3 className={"text-center"}>Loading...</h3>
     }
@@ -138,6 +163,25 @@ function FoodDetail(){
     const del=(no:number):void =>{
          setNo(no)
          comnentDelete()
+    }
+
+    const updateData=(no:number,index:number):void =>{
+        if(umsgRef.current && comment){
+            umsgRef.current.value=comment[index].msg
+        }
+        setToggle(false)
+        setNo(no)
+        console.log(comment && comment[index].msg)
+
+
+    }
+    const update=():void =>{
+        if(umsg==="")
+        {
+            umsgRef.current?.focus()
+            return;
+        }
+        comnentUpdate()
     }
     return (
         <Fragment>
@@ -227,6 +271,9 @@ function FoodDetail(){
                     <div className="row" style={{"marginTop":"20px"}}>
                        <table className="table">
                            <tbody>
+                            <tr>
+                                <td><h3>[댓글]</h3></td>
+                            </tr>
                              <tr>
                                  <td>
                                      {
@@ -243,7 +290,7 @@ function FoodDetail(){
                                                             com.id===sessionStorage.getItem("id") &&
                                                             (
                                                               <span>
-                                                               <button className={"btn-sm btn-warning"} >수정</button>&nbsp;
+                                                               <button className={"btn-sm btn-warning"} onClick={()=>updateData(com.no,index)}>수정</button>&nbsp;
                                                                <button className={"btn-sm btn-info"} onClick={()=>del(com.no)}>삭제</button>
                                                               </span>
                                                             )
@@ -264,7 +311,7 @@ function FoodDetail(){
                            </tbody>
                        </table>
                         {
-                            sessionStorage.getItem("id") && toggle?
+                            sessionStorage.getItem("id") && toggle===true?
                                 (
                                     <table className="table">
                                         <tbody>
@@ -288,12 +335,12 @@ function FoodDetail(){
                                         <tr>
                                             <td>
                                                 <textarea rows={5} cols={120} style={{"float":"left"}}
-                                                          ref={msgRef}
-                                                          onChange={(e)=>setMsg(e.target.value)}></textarea>
+                                                          ref={umsgRef}
+                                                          onChange={(e)=>setUmsg(e.target.value)}></textarea>
                                                 <button className={"btn-primary"}
                                                         style={{"float":"left","width":"100px",height:"100px"}}
-                                                        onClick={insert}
-                                                        value={msg}
+                                                        value={umsg}
+                                                        onClick={()=>update()}
                                                 >수정하기</button>
                                             </td>
                                         </tr>
