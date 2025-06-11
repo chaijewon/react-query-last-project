@@ -40,8 +40,19 @@ interface FoodDetailData {
     price:string;
     rdays:string;
 }
+interface CommentData{
+    no :number;
+    fno:number;
+    id:string;
+    name:string;
+    msg:string;
+    dbday:string;
+}
 interface FoodResponse{
-    data:FoodDetailData;
+    data:{
+        foods:FoodDetailData,
+        comments:CommentData[]
+    }
 }
 function FoodDetail(){
     // FoodList에서 들어오는 값
@@ -57,8 +68,8 @@ function FoodDetail(){
     // 서버 연결
     const {isLoading,isError,error,data}=useQuery<FoodResponse,Error>({
         queryKey:['food-detail',fno],
-        queryFn: async () => await apiClient.get(`/food/detail/${fno}`),
-        enabled:!!fno // fno가 존재할때만 실행
+        queryFn: async () => await apiClient.get(`/food/detail/${fno}`)
+
     })
 
     if(isLoading){
@@ -67,8 +78,10 @@ function FoodDetail(){
     if(isError)
         return <h3 className={"text-center"}>{error?.message}</h3>;
 
-    const food=data?.data
+    const food:FoodDetailData|undefined=data?.data.foods
     console.log(food)
+    const comment:CommentData[]|undefined=data?.data.comments
+    console.log(comment)
     return (
         <Fragment>
             <div className="breadcumb-area" style={{"backgroundImage": "url(/img/bg-img/breadcumb.jpg)"}}>
@@ -153,6 +166,33 @@ function FoodDetail(){
                              </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div className="row" style={{"marginTop":"20px"}}>
+                       <table className="table">
+                           <tbody>
+                             <tr>
+                                 <td>
+
+                                 </td>
+                             </tr>
+                           </tbody>
+                       </table>
+                        {
+                            sessionStorage.getItem("id") &&
+                            <table className="table">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <textarea rows={5} cols={120} style={{"float":"left"}}></textarea>
+                                        <button className={"btn-primary"}
+                                                style={{"float":"left","width":"100px",height:"100px"}}
+                                        >댓글쓰기</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        }
+
                     </div>
                 </div>
             </section>

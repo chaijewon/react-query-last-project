@@ -6,6 +6,7 @@ import {AxiosResponse,AxiosError} from "axios";
 
 // jsx => javascript+xml => createElement
 function Header() {
+    //const nav = useNavigate();
     const [login, setLogin] = useState<boolean>(false);
     const [id, setId] = useState<string>("");
     const [pwd, setPwd] = useState<string>("");
@@ -54,6 +55,7 @@ function Header() {
                 // session.setAttribute()
                 window.sessionStorage.setItem("name",data.name);
                 setLogin(true)
+                window.location.reload();
             }
         },
         onError:(error:AxiosError)=>{
@@ -88,6 +90,7 @@ function Header() {
         setId('')
         setPwd('')
         setLogin(false)
+        window.location.reload();
     }
     return (
         <Fragment>
