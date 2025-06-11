@@ -8,9 +8,10 @@ interface Message {
 }
 
 const Chat = () => {
+
     const [messages, setMessages] = useState<Message[]>([]);
     const [text, setText] = useState('');
-    const [user] = useState('User1'); // 실제 로그인 사용자로 대체 가능
+    const [user] = useState(sessionStorage.getItem("name")); // 실제 로그인 사용자로 대체 가능
     const ws = useRef<WebSocket | null>(null);
 
     useEffect(() => {
