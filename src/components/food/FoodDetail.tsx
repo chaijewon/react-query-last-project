@@ -181,7 +181,17 @@ function FoodDetail(){
                                                     <td width={"80%"} className={"text-left"}>
                                                         ◑{com.name}({com.dbday})
                                                     </td>
-                                                    <td width={"20%"} className={"text-right"}></td>
+                                                    <td width={"20%"} className={"text-right"}>
+                                                        {
+                                                            com.id===sessionStorage.getItem("id") &&
+                                                            (
+                                                              <span>
+                                                               <button className={"btn-sm btn-primary"}>수정</button>&nbsp;
+                                                               <button className={"btn-sm btn-primary"}>삭제</button>
+                                                              </span>
+                                                            )
+                                                        }
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td colSpan={2} valign={"top"}>
