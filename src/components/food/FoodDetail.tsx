@@ -1,8 +1,9 @@
-import {Fragment,useEffect} from "react";
-import {useQuery} from "@tanstack/react-query";
+import {Fragment,useEffect,useRef,useState} from "react";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {useNavigate,useParams} from "react-router-dom";
 import apiClient from "../../http-commons";
 import FoodMap from "./FoodMap";
+import {AxiosError, AxiosResponse} from "axios";
 // react / vue => 화면 UI (HTML)
 // 서버로부터 데이터를 어떻게 받을까? => 속도
 // 같은 값을 가지고 오는 경우 => 어떻게 처리 : cache => 키
@@ -58,6 +59,8 @@ function FoodDetail(){
     // FoodList에서 들어오는 값
     const {fno}=useParams<{fno:string}>()
     const nav = useNavigate();
+    const [msg,setMsg]=useState<string>("");
+    const msgRef = useRef<HTMLTextAreaElement>(null);
     // link:PUSH , back:POP
     /*
           let a=10
@@ -66,10 +69,29 @@ function FoodDetail(){
           let a:number=10
      */
     // 서버 연결
-    const {isLoading,isError,error,data}=useQuery<FoodResponse,Error>({
+    const {isLoading,isError,error,data,refetch:foodDetailData}=useQuery<FoodResponse,Error>({
         queryKey:['food-detail',fno],
         queryFn: async () => await apiClient.get(`/food/detail/${fno}`)
 
+    })
+
+    const {mutate:commentInsert} = useMutation<FoodResponse>({
+        mutationFn: async () => {
+            const res:AxiosResponse<FoodResponse,Error>=await apiClient.post(`/comment/insert`,{
+                    fno: fno,
+                    id: sessionStorage.getItem("id"),
+                    name: sessionStorage.getItem("name"),
+                    msg: msg
+
+            })
+            return res.data
+        },
+        onSuccess:(data:FoodResponse) => {
+           foodDetailData()
+        },
+        onError:(error:Error)=>{
+            console.log("comment Error: ",error.message);
+        }
     })
 
     if(isLoading){
@@ -78,10 +100,21 @@ function FoodDetail(){
     if(isError)
         return <h3 className={"text-center"}>{error?.message}</h3>;
 
+
+
     const food:FoodDetailData|undefined=data?.data.foods
     console.log(food)
     const comment:CommentData[]|undefined=data?.data.comments
     console.log(comment)
+
+    const insert=():void =>{
+        if(msg==="")
+        {
+            msgRef.current?.focus()
+            return;
+        }
+        commentInsert()
+    }
     return (
         <Fragment>
             <div className="breadcumb-area" style={{"backgroundImage": "url(/img/bg-img/breadcumb.jpg)"}}>
@@ -186,8 +219,8 @@ function FoodDetail(){
                                                             com.id===sessionStorage.getItem("id") &&
                                                             (
                                                               <span>
-                                                               <button className={"btn-sm btn-primary"}>수정</button>&nbsp;
-                                                               <button className={"btn-sm btn-primary"}>삭제</button>
+                                                               <button className={"btn-sm btn-warning"}>수정</button>&nbsp;
+                                                               <button className={"btn-sm btn-info"}>삭제</button>
                                                               </span>
                                                             )
                                                         }
@@ -212,9 +245,12 @@ function FoodDetail(){
                                 <tbody>
                                 <tr>
                                     <td>
-                                        <textarea rows={5} cols={120} style={{"float":"left"}}></textarea>
+                                        <textarea rows={5} cols={120} style={{"float":"left"}}
+                                          ref={msgRef}
+                                          onChange={(e)=>setMsg(e.target.value)}></textarea>
                                         <button className={"btn-primary"}
                                                 style={{"float":"left","width":"100px",height:"100px"}}
+                                                onClick={insert}
                                         >댓글쓰기</button>
                                     </td>
                                 </tr>
