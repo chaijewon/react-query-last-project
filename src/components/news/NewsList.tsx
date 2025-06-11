@@ -13,7 +13,7 @@
  */
 import {Fragment,useState,useRef} from "react";
 import {useQuery} from "@tanstack/react-query";
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 /*
      function NewsList(){
 
@@ -66,7 +66,7 @@ interface NewsProps{
 function NewsList(){
    const [fd,setFd]=useState<string>("맛집");
    const fdRef=useRef<HTMLInputElement>(null);
-   const {isLoading,isError,error,data}=useQuery<NewsResponse,Error>({
+   const {isLoading,isError,error,data,refetch:newsFind}=useQuery<AxiosResponse,Error>({
        queryKey:['news-list',fd],
        queryFn: async()=> await axios.get('http://localhost:3355/news/list',{
            params:{
@@ -80,6 +80,18 @@ function NewsList(){
         return <h3>서버 에러 발생 : {`${error}`}</h3>
     //const news:NewsProps|undefined=data?.items
     //console.log(news)
+    const find=()=>{
+        if(fd==="")
+        {
+            fdRef.current?.focus()
+            return;
+        }
+        if(fdRef.current)
+        {
+            setFd(fdRef.current?.value)
+        }
+        newsFind()
+    }
    return (
        <Fragment>
            <div className="breadcumb-area" style={{"backgroundImage": "url(/img/bg-img/breadcumb.jpg)"}}>
@@ -97,8 +109,8 @@ function NewsList(){
                <div className="container">
                    <div className="row">
                        <input type={"text"} className={"input-sm"}
-                              size={20} ref={fdRef}/>
-                       <button className={"btn-sm btn-danger"}>검색</button>
+                              size={20} ref={fdRef} />
+                       <button className={"btn-sm btn-danger"} onClick={find}>검색</button>
                    </div>
                    <div className="row" style={{"marginTop":"20px"}}>
                        <table className="table">
@@ -106,15 +118,15 @@ function NewsList(){
                            <tr>
                                <td>
                                    {
-                                       data?.items &&
-                                       data?.items.map((n:NewsData)=>
+                                       data?.data.items &&
+                                       data?.data.items.map((n:NewsData)=>
                                          <table className={"table"}>
                                              <tbody>
                                              <tr>
-                                                 <td><h3 style={{"color":"orange"}}>{n.title}</h3></td>
+                                                 <td><a href={n.link}><h3 style={{"color":"orange"}} dangerouslySetInnerHTML={{__html: n.title}}></h3></a></td>
                                              </tr>
                                              <tr>
-                                                 <td>{n.description}</td>
+                                                 <td dangerouslySetInnerHTML={{__html: n.description}}></td>
                                              </tr>
                                              </tbody>
                                          </table>
