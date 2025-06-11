@@ -60,7 +60,9 @@ function FoodDetail(){
     const {fno}=useParams<{fno:string}>()
     const nav = useNavigate();
     const [msg,setMsg]=useState<string>("");
+    const [no,setNo]=useState<number>(0);
     const msgRef = useRef<HTMLTextAreaElement>(null);
+    const [toggle,setToggle]=useState<boolean>(true);
     // link:PUSH , back:POP
     /*
           let a=10
@@ -87,13 +89,30 @@ function FoodDetail(){
             return res.data
         },
         onSuccess:(data:FoodResponse) => {
-           foodDetailData()
+            foodDetailData()
+            if (msgRef.current) {
+                msgRef.current.value = '';
+            }
         },
         onError:(error:Error)=>{
             console.log("comment Error: ",error.message);
         }
     })
 
+    // 삭제
+    const {mutate:comnentDelete}=useMutation<FoodResponse>({
+        mutationFn:async ()=>{
+            const res:AxiosResponse<FoodResponse,Error>=await apiClient.delete(`/comment/delete/${no}/${fno}`)
+            return res.data
+        },
+        onSuccess:(data:FoodResponse) => {
+            foodDetailData()
+        },
+        onError:(error:Error)=>{
+            console.log("comment Error: ",error.message);
+        }
+    })
+    // 수정
     if(isLoading){
         return <h3 className={"text-center"}>Loading...</h3>
     }
@@ -114,6 +133,11 @@ function FoodDetail(){
             return;
         }
         commentInsert()
+
+    }
+    const del=(no:number):void =>{
+         setNo(no)
+         comnentDelete()
     }
     return (
         <Fragment>
@@ -207,8 +231,8 @@ function FoodDetail(){
                                  <td>
                                      {
                                          comment &&
-                                         comment.map((com:CommentData)=>
-                                           <table className={"table"}>
+                                         comment.map((com:CommentData,index)=>
+                                           <table className={"table"} key={index}>
                                                <tbody>
                                                 <tr>
                                                     <td width={"80%"} className={"text-left"}>
@@ -219,8 +243,8 @@ function FoodDetail(){
                                                             com.id===sessionStorage.getItem("id") &&
                                                             (
                                                               <span>
-                                                               <button className={"btn-sm btn-warning"}>수정</button>&nbsp;
-                                                               <button className={"btn-sm btn-info"}>삭제</button>
+                                                               <button className={"btn-sm btn-warning"} >수정</button>&nbsp;
+                                                               <button className={"btn-sm btn-info"} onClick={()=>del(com.no)}>삭제</button>
                                                               </span>
                                                             )
                                                         }
@@ -240,22 +264,42 @@ function FoodDetail(){
                            </tbody>
                        </table>
                         {
-                            sessionStorage.getItem("id") &&
-                            <table className="table">
-                                <tbody>
-                                <tr>
-                                    <td>
-                                        <textarea rows={5} cols={120} style={{"float":"left"}}
-                                          ref={msgRef}
-                                          onChange={(e)=>setMsg(e.target.value)}></textarea>
-                                        <button className={"btn-primary"}
-                                                style={{"float":"left","width":"100px",height:"100px"}}
-                                                onClick={insert}
-                                        >댓글쓰기</button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            sessionStorage.getItem("id") && toggle?
+                                (
+                                    <table className="table">
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                <textarea rows={5} cols={120} style={{"float":"left"}}
+                                                  ref={msgRef}
+                                                  onChange={(e)=>setMsg(e.target.value)}></textarea>
+                                                <button className={"btn-primary"}
+                                                        style={{"float":"left","width":"100px",height:"100px"}}
+                                                        onClick={insert}
+                                                        value={msg}
+                                                >댓글쓰기</button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                ):(
+                                    <table className="table">
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                <textarea rows={5} cols={120} style={{"float":"left"}}
+                                                          ref={msgRef}
+                                                          onChange={(e)=>setMsg(e.target.value)}></textarea>
+                                                <button className={"btn-primary"}
+                                                        style={{"float":"left","width":"100px",height:"100px"}}
+                                                        onClick={insert}
+                                                        value={msg}
+                                                >수정하기</button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                )
                         }
 
                     </div>
